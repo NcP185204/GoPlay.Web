@@ -1,0 +1,62 @@
+@using GoPlay.Web.Enums
+@model GoPlay.Web.ViewModels.CourtSearchViewModel
+
+@{
+    ViewData["Title"] = "Danh sách sân";
+}
+
+<div class="mb-4">
+    <h2>Danh sách sân</h2>
+
+    <!-- Form tìm kiếm: GET để có thể chia sẻ link và giữ kết quả khi F5 -->
+    <form asp-controller="Courts" asp-action="Index" method="get" class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label asp-for="Name" class="form-label">Tên sân</label>
+            <input asp-for="Name" class="form-control" placeholder="Nhập tên sân..." />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="CourtType" class="form-label">Loại sân</label>
+            <select asp-for="CourtType" class="form-select">
+                <option value="">Tất cả</option>
+                @foreach (var type in Enum.GetValues<SportType>())
+                {
+                    <option value="@type">@type</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+        </div>
+    </form>
+</div>
+
+@if (Model.Results.Count == 0)
+{
+    <div class="alert alert-info">Không tìm thấy sân nào phù hợp.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var court in Model.Results)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (!string.IsNullOrWhiteSpace(court.ThumbnailUrl))
+                    {
+                        <img src="@court.ThumbnailUrl" class="card-img-top" alt="@court.Name" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@court.Name</h5>
+                        <p class="card-text text-muted mb-1">@court.CourtType</p>
+                        <p class="card-text">@court.Address</p>
+                        <p class="card-text">
+                            <strong>@court.PricePerHour.ToString("N0")</strong> VND/giờ
+                        </p>
+                        <a asp-controller="Courts" asp-action="Details" asp-route-id="@court.Id"
+                           class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
