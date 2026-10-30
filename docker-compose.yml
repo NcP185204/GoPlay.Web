@@ -1,0 +1,18 @@
+# Docker Compose để chạy SQL Server cho môi trường dev (tương đương việc cài DB local).
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: goplay-sqlserver
+    environment:
+      # Tài khoản SA (sysadmin) mặc định của SQL Server.
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Goplay@12345"
+    ports:
+      # Map cổng 1433 của container ra máy host để app kết nối qua localhost.
+      - "1433:1433"
+    volumes:
+      # Volume giúp giữ dữ liệu khi container bị tắt/xoá.
+      - sqlserver-data:/var/opt/mssql
+
+volumes:
+  sqlserver-data:
