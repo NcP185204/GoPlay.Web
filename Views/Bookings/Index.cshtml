@@ -1,0 +1,70 @@
+@using GoPlay.Web.Enums
+@model GoPlay.Web.ViewModels.BookingHistoryViewModel
+
+@{
+    ViewData["Title"] = "Lịch sử đặt sân";
+}
+
+<h2 class="mb-4">Lịch sử đặt sân</h2>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model.Bookings.Count == 0)
+{
+    <div class="alert alert-info">Bạn chưa có đơn đặt sân nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Sân</th>
+                    <th>Khung giờ</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thanh toán</th>
+                    <th>Ngày đặt</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model.Bookings)
+                {
+                    <tr>
+                        <td>#@booking.Id</td>
+                        <td>@booking.Court?.Name</td>
+                        <td>
+                            @string.Join(", ", booking.TimeSlots
+                                .OrderBy(t => t.StartTime)
+                                .Select(t => $"{t.StartTime:HH:mm}–{t.EndTime:HH:mm}"))
+                        </td>
+                        <td>@booking.TotalPrice.ToString("N0") VND</td>
+                        <td>@booking.Status</td>
+                        <td>@booking.PaymentStatus</td>
+                        <td>@booking.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (booking.Status != BookingStatus.Cancelled)
+                            {
+                                <form asp-controller="Bookings" asp-action="Cancel" asp-route-id="@booking.Id"
+                                      method="post" asp-antiforgery="true"
+                                      onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn này?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Hủy</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

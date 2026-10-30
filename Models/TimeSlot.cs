@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace GoPlay.Web.Models;
 
 // Khung giờ đặt sân (tương đương model/TimeSlot.java).
@@ -20,6 +22,11 @@ public class TimeSlot
     // Giá khung giờ: Court.PricePerHour * (độ dài slot / 60), gán lúc sinh slot.
     public decimal Price { get; set; }
 
-    // Navigation many-to-many: 1 slot có thể nằm trong 1 đơn đặt.
+    // RowVersion: dùng cho optimistic concurrency. Khi 2 user cùng đặt 1 slot,
+    // EF sẽ phát hiện xung đột (thay vì ghi đè im lặng) và ném DbUpdateConcurrencyException.
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
+
+    // Navigation many-to-many: 1 slot có thể nằm trong nhiều đơn đặt.
     public List<Booking> Bookings { get; set; } = new();
 }

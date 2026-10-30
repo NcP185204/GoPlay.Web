@@ -1,5 +1,6 @@
 using GoPlay.Web.Data;
 using GoPlay.Web.Models;
+using GoPlay.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+// Service nghiệp vụ, đăng ký scoped để inject vào Controller.
+builder.Services.AddScoped<CourtService>();
+builder.Services.AddScoped<BookingService>();
 
 var app = builder.Build();
 
