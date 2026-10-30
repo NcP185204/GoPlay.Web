@@ -1,0 +1,98 @@
+@model GoPlay.Web.ViewModels.CourtDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Court.Name;
+}
+
+<div class="mb-3">
+    <a asp-controller="Courts" asp-action="Index" class="btn btn-outline-secondary btn-sm">← Quay lại danh sách</a>
+</div>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        @if (!string.IsNullOrWhiteSpace(Model.Court.ThumbnailUrl))
+        {
+            <img src="@Model.Court.ThumbnailUrl" class="img-fluid rounded" alt="@Model.Court.Name" />
+        }
+    </div>
+    <div class="col-md-8">
+        <h2>@Model.Court.Name</h2>
+        <p class="text-muted">@Model.Court.CourtType</p>
+        <p>@Model.Court.Address</p>
+        <p>@Model.Court.Description</p>
+        <p><strong>@Model.Court.PricePerHour.ToString("N0")</strong> VND/giờ</p>
+    </div>
+</div>
+
+<hr />
+
+<h4>Khung giờ ngày @Model.Date.ToString("dd/MM/yyyy")</h4>
+
+<!-- Chọn ngày để xem slot tương ứng -->
+<form asp-controller="Courts" asp-action="Details" asp-route-id="@Model.Court.Id" method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label for="date" class="form-label">Chọn ngày</label>
+        <input type="date" id="date" name="date" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Xem khung giờ</button>
+    </div>
+</form>
+
+@if (Model.TimeSlots.Count == 0)
+{
+    <div class="alert alert-info">Ngày này chưa có khung giờ.</div>
+}
+else
+{
+    <!-- Form đặt sân: gửi danh sách slot được chọn sang BookingController.Create -->
+    <form asp-controller="Bookings" asp-action="Create" method="post" asp-antiforgery="true">
+        <input type="hidden" name="CourtId" value="@Model.Court.Id" />
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            @foreach (var slot in Model.TimeSlots)
+            {
+                <div class="border rounded p-2 text-center @(slot.IsAvailable ? "bg-light" : "bg-secondary text-white opacity-75")">
+                    <div>@slot.StartTime.ToString("HH:mm") - @slot.EndTime.ToString("HH:mm")</div>
+                    <div class="small">@slot.Price.ToString("N0") VND</div>
+                    @if (slot.IsAvailable)
+                    {
+                        <label class="small d-block mt-1">
+                            <input type="checkbox" name="SlotIds" value="@slot.Id" /> Chọn
+                        </label>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Đã đặt</span>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="mb-3">
+                <label for="note" class="form-label">Ghi chú</label>
+                <textarea id="note" name="Note" class="form-control" rows="2" placeholder="Ghi chú (không bắt buộc)"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Đặt sân (thanh toán tiền mặt)</button>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                Vui lòng <a asp-controller="Account" asp-action="Login">đăng nhập</a> để đặt sân.
+            </div>
+        }
+    </form>
+}
