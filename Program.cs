@@ -1,3 +1,4 @@
+using GoPlay.Web;
 using GoPlay.Web.Data;
 using GoPlay.Web.Models;
 using GoPlay.Web.Services;
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Đăng ký handler bắt exception toàn cục (IExceptionHandler) để log method + path.
+// Cần AddProblemDetails để UseExceptionHandler() có thể dùng IExceptionHandler đã đăng ký.
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Đăng ký DbContext: mỗi request được cấp 1 instance (scoped),
 // dùng SQL Server qua chuỗi kết nối trong appsettings.json.
@@ -33,9 +39,12 @@ builder.Services.AddScoped<AdminService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+// Với lỗi 404/405, chạy lại Home/Error để hiển thị trang lỗi thân thiện thay vì trang trắng mặc định.
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?code={0}");
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

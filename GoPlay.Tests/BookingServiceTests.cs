@@ -3,6 +3,7 @@ using GoPlay.Web.Enums;
 using GoPlay.Web.Models;
 using GoPlay.Web.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GoPlay.Tests;
 
@@ -59,7 +60,7 @@ public class BookingServiceTests
     public async Task CreateAsync_ComputesTotalPriceFromSelectedSlots()
     {
         using var db = new TestDb();
-        var svc = new BookingService(db.Context);
+        var svc = new BookingService(db.Context, NullLogger<BookingService>.Instance);
         var (court, slot1) = await SeedCourtAndSlotAsync(db.Context, 100000m, 100000m);
 
         var slot2 = new TimeSlot
@@ -87,7 +88,7 @@ public class BookingServiceTests
     public async Task CreateAsync_BlocksAlreadyBookedSlot()
     {
         using var db = new TestDb();
-        var svc = new BookingService(db.Context);
+        var svc = new BookingService(db.Context, NullLogger<BookingService>.Instance);
         var (_, slot) = await SeedCourtAndSlotAsync(db.Context);
         var user1 = await SeedUserAsync(db.Context, "user-1");
         await SeedUserAsync(db.Context, "user-2");
@@ -138,7 +139,7 @@ public class BookingServiceTests
     public async Task CancelAsync_FreesSlotsAndUpdatesStatuses()
     {
         using var db = new TestDb();
-        var svc = new BookingService(db.Context);
+        var svc = new BookingService(db.Context, NullLogger<BookingService>.Instance);
         var (_, slot) = await SeedCourtAndSlotAsync(db.Context);
         var user = await SeedUserAsync(db.Context, "user-1");
         var booking = await svc.CreateAsync(user.Id, new List<int> { slot.Id }, null);
@@ -160,7 +161,7 @@ public class BookingServiceTests
     public async Task CancelAsync_ByNonOwner_Throws()
     {
         using var db = new TestDb();
-        var svc = new BookingService(db.Context);
+        var svc = new BookingService(db.Context, NullLogger<BookingService>.Instance);
         var (_, slot) = await SeedCourtAndSlotAsync(db.Context);
         var user = await SeedUserAsync(db.Context, "user-1");
         await SeedUserAsync(db.Context, "user-2");

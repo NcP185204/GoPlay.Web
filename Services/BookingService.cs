@@ -2,12 +2,13 @@ using GoPlay.Web.Data;
 using GoPlay.Web.Enums;
 using GoPlay.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GoPlay.Web.Services;
 
 // Nghiệp vụ đặt sân: tạo đơn, xem lịch sử, hủy đơn.
 // Tương đương BookingServiceImpl bên Java (nghiệp vụ + giao dịch).
-public class BookingService(ApplicationDbContext db)
+public class BookingService(ApplicationDbContext db, ILogger<BookingService> logger)
 {
     // Tạo đơn đặt sân thanh toán tiền mặt (R1–R6 trong SPEC).
     // Throws InvalidOperationException khi slot trống rỗng/trùng/khác sân;
@@ -39,8 +40,14 @@ public class BookingService(ApplicationDbContext db)
         }
 
         // R3: slot đã bị đặt thì không cho đặt nữa.
-        if (slots.Any(s => !s.IsAvailable))
+        var unavailableSlotIds = slots.Where(s => !s.IsAvailable).Select(s => s.Id).ToList();
+        if (unavailableSlotIds.Count > 0)
         {
+            logger.LogWarning(
+                "User {UserId} attempted to book unavailable slot(s) {SlotIds}",
+                userId,
+                unavailableSlotIds);
+
             throw new InvalidOperationException("Khung giờ đã bị người khác đặt.");
         }
 
@@ -68,7 +75,22 @@ public class BookingService(ApplicationDbContext db)
         }
 
         db.Bookings.Add(booking);
-        await db.SaveChangesAsync();
+
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error while creating booking for user {UserId}", userId);
+            throw;
+        }
+
+        logger.LogInformation(
+            "Booking {BookingId} created for user {UserId} with total price {TotalPrice}",
+            booking.Id,
+            userId,
+            totalPrice);
 
         return booking;
     }
@@ -125,7 +147,17 @@ public class BookingService(ApplicationDbContext db)
             slot.IsAvailable = true;
         }
 
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error while cancelling booking {BookingId}", bookingId);
+            throw;
+        }
+
+        logger.LogInformation("Booking {BookingId} cancelled by user {UserId}", bookingId, userId);
         return true;
     }
 }
