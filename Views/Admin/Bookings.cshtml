@@ -1,0 +1,72 @@
+@using GoPlay.Web.Enums
+@model GoPlay.Web.ViewModels.AdminBookingsViewModel
+
+@{
+    ViewData["Title"] = "Quản lý đơn";
+}
+
+<h2 class="mb-4">Quản lý đơn</h2>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model.Bookings.Count == 0)
+{
+    <div class="alert alert-info">Chưa có đơn nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Sân</th>
+                    <th>Khung giờ</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thanh toán</th>
+                    <th>Ngày đặt</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model.Bookings)
+                {
+                    <tr>
+                        <td>#@booking.Id</td>
+                        <td>@booking.User?.FullName</td>
+                        <td>@booking.Court?.Name</td>
+                        <td>
+                            @string.Join(", ", booking.TimeSlots
+                                .OrderBy(t => t.StartTime)
+                                .Select(t => $"{t.StartTime:HH:mm}–{t.EndTime:HH:mm}"))
+                        </td>
+                        <td>@booking.TotalPrice.ToString("N0") VND</td>
+                        <td>@booking.Status</td>
+                        <td>@booking.PaymentStatus</td>
+                        <td>@booking.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (booking.PaymentStatus == PaymentStatus.Pending)
+                            {
+                                <form asp-controller="Admin" asp-action="ConfirmPayment" asp-route-id="@booking.Id"
+                                      method="post" asp-antiforgery="true"
+                                      onsubmit="return confirm('Xác nhận đã thu tiền mặt cho đơn này?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Xác nhận thu tiền</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
