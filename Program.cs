@@ -28,6 +28,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // Service nghiệp vụ, đăng ký scoped để inject vào Controller.
 builder.Services.AddScoped<CourtService>();
 builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<AdminService>();
 
 var app = builder.Build();
 

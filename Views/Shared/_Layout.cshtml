@@ -22,6 +22,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Courts" asp-action="Index">Danh sách sân</a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Quản trị</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Courts">Quản lý sân</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="GenerateSlots">Sinh slot</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Bookings">Quản lý đơn</a>
+                            </li>
+                        }
                     </ul>
                     <!-- Khu vực đăng nhập/đăng xuất: hiển thị theo trạng thái Identity -->
                     <ul class="navbar-nav">
