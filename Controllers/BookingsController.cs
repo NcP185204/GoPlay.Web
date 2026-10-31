@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 namespace GoPlay.Web.Controllers;
 
 // Đặt sân, lịch sử đơn và hủy đơn (tương đương BookingController bên Java).
+// Đặt tên "BookingsController" (số nhiều) để route sinh ra là /Bookings và khớp
+// thư mục view Views/Bookings/ theo SPEC (mục 5).
 // Tất cả đều yêu cầu đăng nhập (Customer).
 [Authorize]
-public class BookingController(
+public class BookingsController(
     BookingService bookingService,
     UserManager<ApplicationUser> userManager) : Controller
 {
