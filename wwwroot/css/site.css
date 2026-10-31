@@ -1,31 +1,212 @@
+:root {
+    --goplay-green: #16a34a;
+    --goplay-green-dark: #15803d;
+    --goplay-green-light: #22c55e;
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    margin-bottom: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+main {
+    flex: 1 0 auto;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* ===== Màu chủ đạo xanh lá cho Bootstrap ===== */
+.btn-success {
+    --bs-btn-bg: var(--goplay-green);
+    --bs-btn-border-color: var(--goplay-green);
+    --bs-btn-hover-bg: var(--goplay-green-dark);
+    --bs-btn-hover-border-color: var(--goplay-green-dark);
+    --bs-btn-active-bg: var(--goplay-green-dark);
+    --bs-btn-active-border-color: var(--goplay-green-dark);
+}
+
+.bg-success {
+    background-color: var(--goplay-green) !important;
+}
+
+.text-success {
+    color: var(--goplay-green) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--goplay-green) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--goplay-green-light);
+    box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.15);
+}
+
+a {
+    color: var(--goplay-green-dark);
+}
+
+a:hover {
+    color: var(--goplay-green);
+}
+
+/* ===== Navbar ===== */
+.goplay-navbar {
+    background: linear-gradient(90deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.goplay-navbar .navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.goplay-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.goplay-navbar .nav-link:hover,
+.goplay-navbar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+/* ===== Footer ===== */
+.goplay-footer {
+    background: #14532d;
+    flex-shrink: 0;
+}
+
+/* ===== Hero ===== */
+.goplay-hero {
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 45%, #22c55e 100%);
+    box-shadow: 0 12px 30px rgba(22, 163, 74, 0.25);
+}
+
+/* ===== Card ===== */
+.goplay-card {
+    border-radius: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.goplay-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12) !important;
+}
+
+.feature-icon {
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== Ảnh card sân ===== */
+.court-card-img {
+    border-radius: 1rem 1rem 0 0;
+    height: 190px;
+    background: #e2e8f0;
+}
+
+.court-card-img img {
+    height: 190px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.goplay-card:hover .court-card-img img {
+    transform: scale(1.04);
+}
+
+.court-placeholder {
+    height: 190px;
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+/* ===== Form tìm kiếm ===== */
+.goplay-search {
+    background: #ffffff;
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Slot chọn khung giờ ===== */
+.slot-option {
+    cursor: pointer;
+    margin: 0;
+}
+
+.slot-badge {
+    display: inline-block;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--goplay-green);
+    border-radius: 0.75rem;
+    color: var(--goplay-green-dark);
+    background: #ffffff;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    user-select: none;
+}
+
+.slot-option:hover .slot-badge {
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.slot-option.selected .slot-badge {
+    background: var(--goplay-green);
+    border-color: var(--goplay-green);
+    color: #ffffff;
+}
+
+.slot-option.selected .slot-badge small {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.slot-disabled {
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.75rem;
+    background: #e2e8f0;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 575.98px) {
+    .goplay-hero {
+        padding: 2rem 1.25rem !important;
+    }
+
+    .goplay-hero .display-4 {
+        font-size: 1.8rem;
+    }
+
+    .goplay-search {
+        width: 100%;
+    }
 }

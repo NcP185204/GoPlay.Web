@@ -1,8 +1,59 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero banner -->
+<section class="goplay-hero rounded-4 p-5 mb-5 text-white">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-bold mb-3">Đặt sân thể thao<br />nhanh chóng, dễ dàng</h1>
+            <p class="lead mb-4">
+                Tìm sân bóng đá, cầu lông, bóng rổ, tennis và bóng chuyền gần bạn.
+                Chọn khung giờ trống và đặt ngay chỉ trong vài bước.
+            </p>
+            <a asp-controller="Courts" asp-action="Index" class="btn btn-light btn-lg fw-semibold">
+                <i class="bi bi-map me-2"></i>Xem danh sách sân
+            </a>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block text-center">
+            <i class="bi bi-trophy-fill display-1 opacity-75"></i>
+        </div>
+    </div>
+</section>
+
+<!-- 3 card giới thiệu tính năng -->
+<section class="row g-4">
+    <div class="col-md-4">
+        <div class="card goplay-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mb-3">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h5 class="fw-bold">Tìm sân dễ dàng</h5>
+                <p class="text-muted mb-0">Tìm kiếm theo tên và loại sân, xem giá thuê theo giờ rõ ràng.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card goplay-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mb-3">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h5 class="fw-bold">Chọn khung giờ trống</h5>
+                <p class="text-muted mb-0">Xem lịch khung giờ theo ngày, chọn nhiều khung giờ cùng một sân.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card goplay-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mb-3">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <h5 class="fw-bold">Thanh toán tiền mặt</h5>
+                <p class="text-muted mb-0">Đặt sân thanh toán tiền mặt, theo dõi lịch sử và hủy đơn dễ dàng.</p>
+            </div>
+        </div>
+    </div>
+</section>

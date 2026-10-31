@@ -5,34 +5,42 @@
     ViewData["Title"] = "Danh sách sân";
 }
 
-<div class="mb-4">
-    <h2>Danh sách sân</h2>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-map text-success me-2"></i>Danh sách sân</h2>
 
-    <!-- Form tìm kiếm: GET để có thể chia sẻ link và giữ kết quả khi F5 -->
-    <form asp-controller="Courts" asp-action="Index" method="get" class="row g-2 align-items-end">
-        <div class="col-md-5">
-            <label asp-for="Name" class="form-label">Tên sân</label>
-            <input asp-for="Name" class="form-control" placeholder="Nhập tên sân..." />
+    <!-- Form tìm kiếm: GET để giữ kết quả khi F5 và chia sẻ link -->
+    <form asp-controller="Courts" asp-action="Index" method="get" class="row g-2 align-items-center goplay-search">
+        <div class="col">
+            <label asp-for="Name" class="visually-hidden">Tên sân</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input asp-for="Name" class="form-control" placeholder="Nhập tên sân..." />
+            </div>
         </div>
-        <div class="col-md-4">
-            <label asp-for="CourtType" class="form-label">Loại sân</label>
+        <div class="col-auto">
+            <label asp-for="CourtType" class="visually-hidden">Loại sân</label>
             <select asp-for="CourtType" class="form-select">
-                <option value="">Tất cả</option>
+                <option value="">Tất cả loại</option>
                 @foreach (var type in Enum.GetValues<SportType>())
                 {
                     <option value="@type">@type</option>
                 }
             </select>
         </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-funnel me-1"></i>Tìm kiếm
+            </button>
         </div>
     </form>
 </div>
 
 @if (Model.Results.Count == 0)
 {
-    <div class="alert alert-info">Không tìm thấy sân nào phù hợp.</div>
+    <div class="alert alert-light border text-center py-5">
+        <i class="bi bi-emoji-frown display-4 d-block mb-2"></i>
+        Không tìm thấy sân nào phù hợp.
+    </div>
 }
 else
 {
@@ -40,20 +48,32 @@ else
         @foreach (var court in Model.Results)
         {
             <div class="col">
-                <div class="card h-100">
-                    @if (!string.IsNullOrWhiteSpace(court.ThumbnailUrl))
-                    {
-                        <img src="@court.ThumbnailUrl" class="card-img-top" alt="@court.Name" />
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@court.Name</h5>
-                        <p class="card-text text-muted mb-1">@court.CourtType</p>
-                        <p class="card-text">@court.Address</p>
-                        <p class="card-text">
-                            <strong>@court.PricePerHour.ToString("N0")</strong> VND/giờ
+                <div class="card goplay-card h-100 border-0 shadow-sm">
+                    <div class="court-card-img overflow-hidden">
+                        @if (!string.IsNullOrWhiteSpace(court.ThumbnailUrl))
+                        {
+                            <img src="@court.ThumbnailUrl" class="img-fluid w-100" alt="@court.Name" />
+                        }
+                        else
+                        {
+                            <div class="court-placeholder d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image display-3 text-white-50"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge bg-success align-self-start mb-2">@court.CourtType</span>
+                        <h5 class="card-title fw-bold">@court.Name</h5>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="bi bi-geo-alt me-1"></i>@court.Address
+                        </p>
+                        <p class="card-text fw-semibold fs-5 text-success mb-3">
+                            @court.PricePerHour.ToString("N0") VND<span class="text-muted fs-6">/giờ</span>
                         </p>
                         <a asp-controller="Courts" asp-action="Details" asp-route-id="@court.Id"
-                           class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                           class="btn btn-success mt-auto">
+                            <i class="bi bi-calendar-check me-1"></i>Đặt sân
+                        </a>
                     </div>
                 </div>
             </div>
