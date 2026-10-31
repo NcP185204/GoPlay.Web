@@ -1,0 +1,43 @@
+@model GoPlay.Web.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- Thẻ thống kê tổng quan dành cho Admin -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="col">
+        <div class="card text-bg-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số sân</h5>
+                <p class="card-text display-6">@Model.TotalCourts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card text-bg-secondary h-100">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số đơn</h5>
+                <p class="card-text display-6">@Model.TotalBookings</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card text-bg-success h-100">
+            <div class="card-body">
+                <h5 class="card-title">Doanh thu</h5>
+                <p class="card-text display-6">@Model.Revenue.ToString("N0") VND</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card text-bg-warning h-100">
+            <div class="card-body">
+                <h5 class="card-title">Đơn chờ xử lý</h5>
+                <p class="card-text display-6">@Model.PendingPayments</p>
+            </div>
+        </div>
+    </div>
+</div>
