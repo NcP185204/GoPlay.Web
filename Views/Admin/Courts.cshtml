@@ -1,0 +1,186 @@
+@using GoPlay.Web.Enums
+@model GoPlay.Web.ViewModels.AdminCourtsViewModel
+
+@{
+    ViewData["Title"] = "Quản lý sân";
+}
+
+<h2 class="mb-4">Quản lý sân</h2>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="row g-4">
+    <!-- Form tạo mới sân -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Tạo sân mới</div>
+            <div class="card-body">
+                <form asp-controller="Admin" asp-action="CreateCourt" method="post" asp-antiforgery="true">
+                    <div class="mb-3">
+                        <label asp-for="Form.Name" class="form-label"></label>
+                        <input asp-for="Form.Name" class="form-control" />
+                        <span asp-validation-for="Form.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.Address" class="form-label"></label>
+                        <input asp-for="Form.Address" class="form-control" />
+                        <span asp-validation-for="Form.Address" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.Description" class="form-label"></label>
+                        <textarea asp-for="Form.Description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.CourtType" class="form-label"></label>
+                        <select asp-for="Form.CourtType" class="form-select">
+                            @foreach (var type in Enum.GetValues<SportType>())
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Form.CourtType" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.PricePerHour" class="form-label"></label>
+                        <input asp-for="Form.PricePerHour" class="form-control" type="number" min="0" />
+                        <span asp-validation-for="Form.PricePerHour" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.ThumbnailUrl" class="form-label"></label>
+                        <input asp-for="Form.ThumbnailUrl" class="form-control" placeholder="https://..." />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Tạo sân</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách sân -->
+    <div class="col-lg-8">
+        @if (Model.Courts.Count == 0)
+        {
+            <div class="alert alert-info">Chưa có sân nào.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Tên</th>
+                            <th>Loại</th>
+                            <th>Địa chỉ</th>
+                            <th>Giá/giờ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var court in Model.Courts)
+                        {
+                            <tr>
+                                <td>@court.Name</td>
+                                <td>@court.CourtType</td>
+                                <td>@court.Address</td>
+                                <td>@court.PricePerHour.ToString("N0")</td>
+                                <td class="text-end">
+                                    <!-- Nút Sửa mở modal (Bootstrap 5), dữ liệu nạp qua data-* -->
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            data-bs-toggle="modal" data-bs-target="#editModal"
+                                            data-id="@court.Id"
+                                            data-name="@court.Name"
+                                            data-address="@court.Address"
+                                            data-description="@court.Description"
+                                            data-courttype="@court.CourtType"
+                                            data-price="@court.PricePerHour"
+                                            data-thumbnail="@court.ThumbnailUrl">
+                                        Sửa
+                                    </button>
+                                    <!-- Nút Xóa: form POST kèm xác nhận để tránh xóa nhầm -->
+                                    <form asp-controller="Admin" asp-action="DeleteCourt" asp-route-id="@court.Id"
+                                          method="post" asp-antiforgery="true" class="d-inline"
+                                          onsubmit="return confirm('Bạn chắc chắn muốn xóa sân này?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal sửa sân: dùng chung 1 form, điền dữ liệu từ nút Sửa -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Admin" asp-action="EditCourt" method="post" asp-antiforgery="true">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa sân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId" name="Id" />
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">Tên sân</label>
+                        <input id="editName" name="Name" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAddress" class="form-label">Địa chỉ</label>
+                        <input id="editAddress" name="Address" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Mô tả</label>
+                        <textarea id="editDescription" name="Description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCourtType" class="form-label">Loại sân</label>
+                        <select id="editCourtType" name="CourtType" class="form-select">
+                            @foreach (var type in Enum.GetValues<SportType>())
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPrice" class="form-label">Giá thuê/giờ</label>
+                        <input id="editPrice" name="PricePerHour" class="form-control" type="number" min="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editThumbnail" class="form-label">Ảnh (URL)</label>
+                        <input id="editThumbnail" name="ThumbnailUrl" class="form-control" placeholder="https://..." />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Điền dữ liệu vào modal khi bấm nút Sửa -->
+    <script>
+        document.getElementById('editModal').addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            document.getElementById('editId').value = button.getAttribute('data-id');
+            document.getElementById('editName').value = button.getAttribute('data-name');
+            document.getElementById('editAddress').value = button.getAttribute('data-address');
+            document.getElementById('editDescription').value = button.getAttribute('data-description');
+            document.getElementById('editCourtType').value = button.getAttribute('data-courttype');
+            document.getElementById('editPrice').value = button.getAttribute('data-price');
+            document.getElementById('editThumbnail').value = button.getAttribute('data-thumbnail');
+        });
+    </script>
+}
